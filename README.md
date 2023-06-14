@@ -8,8 +8,7 @@
   or
 RemoteSite.SERVERNAME: Application status changed (offline).</code></pre>
 
-  <p>I can't describe what the system is exactly, but disconnections and reconnections are normal and they happen quite a lot on a considerable number of machines.</p>
-  <p>What we have to do is ensure that if a disconnection happens, a reconnection must follow within a short amount of time.</p>
+  <p>I can't describe what the system is exactly, but disconnections and reconnections are normal and they happen quite a lot on a considerable number of machines. What we have to do is ensure that if a disconnection happens, a reconnection must follow within a short amount of time.</p>
   <p>The volume of all these emails makes the task gruesome and time-consuming, so the procedure is in dire need of automation.</p>
 
   <p><em> - This is a work in progress and has not been tested adequately -</em></p>
