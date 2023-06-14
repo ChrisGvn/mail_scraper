@@ -75,13 +75,13 @@ def sort_list(input_list):
         writer = csv.writer(file)
         writer.writerows(sorted_data)
 
+    header_ls = ['name', 'status', 'datetime']
+    df = pd.read_csv("status.csv", header=None)
+    df.to_csv("status.csv", header=header_ls, index=False) 
+
     print(f"CSV file has been sorted based on the datetime field.\n")
 
 def categorize():
-
-    header_ls = ['name', 'status', 'datetime']
-    df = pd.read_csv("status.csv", header=None)
-    df.to_csv("status.csv", header=header_ls, index=False)
 
     data = pd.read_csv("status.csv")
     nameslist = data['name'].tolist()
