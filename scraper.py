@@ -31,19 +31,18 @@ def read_outlook_folder(folder_name):
             received_at = email.ReceivedTime.strftime("%d-%m-%Y %H:%M:%S")
             
             #Extract Server's name from mail title with RegEx
-            srvname = re.search(r"\.(.*?):", subject)
+            srvname = re.search(r"\.(.*?):", subject)  #only match something between "." and ":"
             if srvname:
                 srvname_ext = srvname.group(1)
                 
             #Extract Event (connect/disconnect) from mail title with RegEx    
-            status = re.search(r"\((.*?)\)", subject)
+            status = re.search(r"\((.*?)\)", subject) #only match something that is inside parentheses
             if status:
                 status_ext=status.group(1)
 
-            #Form the row and write it on the file
+            #Form the row
             row=[srvname_ext, status_ext, received_at]    
-            #writer.writerow(row) 
-            #append here
+            #append the row to a list
             starter_list.append(row)
 
             #Email counter +1
@@ -82,9 +81,9 @@ def categorize():
 
     header_ls = ['name', 'status', 'datetime']
     df = pd.read_csv("status.csv", header=None)
-    df.to_csv("status_sorted.csv", header=header_ls, index=False)
+    df.to_csv("status.csv", header=header_ls, index=False)
 
-    data = pd.read_csv("status_sorted.csv")
+    data = pd.read_csv("status.csv")
     nameslist = data['name'].tolist()
 
     newlist = []
