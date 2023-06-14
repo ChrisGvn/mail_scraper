@@ -1,38 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>README</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      line-height: 1.5;
-    }
-
-    h2 {
-      font-size: 20px;
-      margin-top: 20px;
-    }
-
-    code {
-      font-family: Consolas, monospace;
-      background-color: #f8f8f8;
-      padding: 2px 4px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    pre {
-      font-family: Consolas, monospace;
-      background-color: #f8f8f8;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      overflow-x: auto;
-    }
-  </style>
-</head>
-<body>
   <h2>Briefly</h2>
   <p>A Python script that scrapes an Outlook folder full of automated logs. These logs are to be summarized into an easier-to-read form.</p>
 
@@ -48,5 +13,3 @@ RemoteSite.SERVERNAME: Application status changed (offline).</code></pre>
   <p>The volume of all these emails makes the task gruesome and time-consuming, so the procedure is in dire need of automation.</p>
 
   <p><em> - This is a work in progress and has not been tested adequately -</em></p>
-</body>
-</html>
