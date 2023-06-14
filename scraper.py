@@ -1,5 +1,5 @@
 import win32com.client as win32
-import re, csv
+import re, csv, itertools
 from datetime import datetime
 import pandas as pd
 
@@ -23,9 +23,7 @@ def read_outlook_folder(folder_name):
         cn=0
 
         starter_list=[]
-        #f = open("status.csv", "w",  newline='') #new list here
-        #writer=csv.writer(f)
-        
+                
         for email in emails:
             subject = email.Subject
             received_at = email.ReceivedTime.strftime("%d-%m-%Y %H:%M:%S")
@@ -41,7 +39,8 @@ def read_outlook_folder(folder_name):
                 status_ext=status.group(1)
 
             #Form the row
-            row=[srvname_ext, status_ext, received_at]    
+            row=[srvname_ext, status_ext, received_at]
+                
             #append the row to a list
             starter_list.append(row)
 
@@ -61,11 +60,6 @@ def sort_list(input_list):
 
     # Read CSV data into a list of tuples
     data = input_list
-    #with open("status.csv", "r", newline="") as file:
-        #reader = csv.reader(file)
-        
-        #for row in reader:
-            #data.append(row)
 
     # Sort the data based on the datetime field
     sorted_data = sorted(data, key=lambda x: datetime.strptime(x[2], "%d-%m-%Y %H:%M:%S"))
@@ -85,34 +79,22 @@ def categorize():
 
     data = pd.read_csv("status.csv")
     nameslist = data['name'].tolist()
+    statlist = data['status'].tolist()
 
-    newlist = []
+    no_tuples = []
     for i in nameslist:
-        if i in newlist:
-            print(i+' is already in')
-        else:
-            newlist.append(i)
-            print(i+' added to list')
+        if i not in no_tuples:
+            no_tuples.append(i)
 
-    ##junk = pd.read_csv("status_sorted.csv")
-    ##namejunk = junk['name'].tolist()
-    ##statjunk = junk['status'].tolist()
-
-    for i in newlist:
-
-        status='disconnected'
-        #for j in junk:
-    #       if name -> match with something
-    #           search if connect or disconnect
-    #           
-    #      
-
-    print(newlist)
-
-# Specify the custom folder name
-folder_name = "PMS"
-
-# Call function
-read_outlook_folder(folder_name)
-#sort_list()
+    for i in no_tuples:
+        for (j ,k) in zip(nameslist, statlist):
+            if i==j:
+                status=k
+        
+        print(i+' '+status)
+        
+# Call functions
+read_outlook_folder('PMS')
 categorize()
+
+input('\nPress any key to close...')
