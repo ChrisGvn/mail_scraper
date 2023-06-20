@@ -4,7 +4,6 @@ from datetime import datetime
 import pandas as pd
 from prettytable import PrettyTable
 
-
 def read_outlook_folder(folder_name):
     outlook = win32.Dispatch("Outlook.Application")
     namespace = outlook.GetNamespace("MAPI")
@@ -101,6 +100,7 @@ def categorize():
         for (j ,k, l) in zip(nameslist, statlist, datelist):
             if i==j:
                 status=k
+                event=l
         
         if status == 'disconnect':
             printstat= 'Disconnected'
@@ -109,7 +109,7 @@ def categorize():
             printstat='OK'
             up+=1
 
-        tableOutput.add_row([n, i, printstat, l])
+        tableOutput.add_row([n, i, printstat, event])
 
     print(tableOutput)
     #print('\n'+str(up+down)+' sites present in Outlook folder.')
