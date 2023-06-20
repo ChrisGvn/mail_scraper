@@ -1,7 +1,9 @@
 import win32com.client as win32
-import re, csv, itertools
+import re, csv
 from datetime import datetime
 import pandas as pd
+from prettytable import PrettyTable
+
 
 def read_outlook_folder(folder_name):
     outlook = win32.Dispatch("Outlook.Application")
@@ -40,7 +42,7 @@ def read_outlook_folder(folder_name):
 
             #Form the row
             row=[srvname_ext, status_ext, received_at]
-                
+
             #append the row to a list
             starter_list.append(row)
 
@@ -53,8 +55,9 @@ def read_outlook_folder(folder_name):
     del outlook
     del namespace
     
-    print("\nTotal of "+str(cn)+ " messages in the folder.")
+    print("\nTotal of "+str(cn)+ " messages.\n")
     sort_list(starter_list)
+    return cn
 
 def sort_list(input_list):
 
@@ -73,28 +76,47 @@ def sort_list(input_list):
     df = pd.read_csv("status.csv", header=None)
     df.to_csv("status.csv", header=header_ls, index=False) 
 
-    print(f"CSV file has been sorted based on the datetime field.\n")
-
 def categorize():
 
     data = pd.read_csv("status.csv")
     nameslist = data['name'].tolist()
     statlist = data['status'].tolist()
+    datelist = data['datetime'].tolist()
 
     no_tuples = []
     for i in nameslist:
         if i not in no_tuples:
             no_tuples.append(i)
 
+    up=0
+    down=0
+    n=0
+
+    tableOutput = PrettyTable(["No.", "Server", "Latest Status", "Date & Time"])
+
     for i in no_tuples:
-        for (j ,k) in zip(nameslist, statlist):
+        
+        n+=1
+
+        for (j ,k, l) in zip(nameslist, statlist, datelist):
             if i==j:
                 status=k
         
-        print(i+' '+status)
-        
+        if status == 'disconnect':
+            printstat= 'Disconnected'
+            down+=1
+        else: 
+            printstat='OK'
+            up+=1
+
+        tableOutput.add_row([n, i, printstat, l])
+
+    print(tableOutput)
+    #print('\n'+str(up+down)+' sites present in Outlook folder.')
+    print(str(up)+' connected, '+str(down)+' disconnected.\n')
+                        
 # Call functions
 read_outlook_folder('PMS')
 categorize()
 
-input('\nPress any key to close...')
+input('\nPress Enter to close...')
