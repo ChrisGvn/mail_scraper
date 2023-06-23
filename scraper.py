@@ -125,7 +125,7 @@ def categorize():
     print('\n'+str(up)+' connected, '+str(down)+' disconnected, '+str(unkn)+' in unknown status\n')
                         
 # Call functions
-read_outlook_folder('PMS')
+read_outlook_folder('Custom Folder')
 categorize()
 
 input('\nPress Enter to close...')
