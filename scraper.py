@@ -4,6 +4,7 @@ from datetime import datetime
 import pandas as pd
 from prettytable import PrettyTable
 
+
 def read_outlook_folder(folder_name):
     outlook = win32.Dispatch("Outlook.Application")
     namespace = outlook.GetNamespace("MAPI")
@@ -34,10 +35,12 @@ def read_outlook_folder(folder_name):
             if srvname:
                 srvname_ext = srvname.group(1)
                 
-            #Extract Event (connect/disconnect) from mail title with RegEx    
+            #Extract Event (connect/disconnect) from mail title with RegEx   
             status = re.search(r"\((.*?)\)", subject) #only match something that is inside parentheses
             if status:
                 status_ext=status.group(1)
+            else:
+                status_ext=""
 
             #Form the row
             row=[srvname_ext, status_ext, received_at]
@@ -56,7 +59,6 @@ def read_outlook_folder(folder_name):
     
     print("\nTotal of "+str(cn)+ " messages.\n")
     sort_list(starter_list)
-    return cn
 
 def sort_list(input_list):
 
@@ -89,6 +91,7 @@ def categorize():
 
     up=0
     down=0
+    unkn=0
     n=0
 
     tableOutput = PrettyTable(["No.", "Server", "Latest Status", "Date & Time"])
@@ -101,19 +104,25 @@ def categorize():
             if i==j:
                 status=k
                 event=l
-        
-        if status == 'disconnect':
-            printstat= 'Disconnected'
-            down+=1
-        else: 
-            printstat='OK'
-            up+=1
+
+        match status:
+
+            case 'connect':
+                up+=1
+                printstat='OK'
+
+            case 'disconnect':
+                down+=1
+                printstat='Disconnected'
+
+            case _:
+                unkn+=1
+                printstat='Unknown/Recovering'
 
         tableOutput.add_row([n, i, printstat, event])
 
     print(tableOutput)
-    #print('\n'+str(up+down)+' sites present in Outlook folder.')
-    print(str(up)+' connected, '+str(down)+' disconnected.\n')
+    print('\n'+str(up)+' connected, '+str(down)+' disconnected, '+str(unkn)+' in unknown status\n')
                         
 # Call functions
 read_outlook_folder('PMS')
