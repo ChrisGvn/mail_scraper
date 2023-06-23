@@ -5,7 +5,7 @@
   <p>A custom monitoring system produces logs about the status of an application running on multiple servers and sends these logs as emails.</p>
   <p>There is no information in the body of the emails, all we're interested in is the title, which resembles the following:</p>
   <pre><code>RemoteSite.SERVERNAME: Application status changed (connect).</code></pre>
-  or
+  <p>or</p>
  <pre><code>RemoteSite.SERVERNAME: Application status changed (disconnect).</code></pre>
 
 <p>In rare occasions we might get a title like:</p>
