@@ -3,7 +3,8 @@ import re, csv
 from datetime import datetime
 import pandas as pd
 from prettytable import PrettyTable
-
+from time import sleep
+from progress.bar import Bar
 
 def read_outlook_folder(folder_name):
     outlook = win32.Dispatch("Outlook.Application")
@@ -21,43 +22,41 @@ def read_outlook_folder(folder_name):
         # Access the emails in the PMS folder
         emails = pms_folder.Items
         
-        #Email counter set to 0
-        cn=0
+        starter_list=[]   
 
-        starter_list=[]
+        with Bar('Reading E-mails...', max=len(emails)) as bar:
+
+            for email in emails:
+                subject = email.Subject
+                received_at = email.ReceivedTime.strftime("%d-%m-%Y %H:%M:%S")
                 
-        for email in emails:
-            subject = email.Subject
-            received_at = email.ReceivedTime.strftime("%d-%m-%Y %H:%M:%S")
-            
-            #Extract Server's name from mail title with RegEx
-            srvname = re.search(r"\.(.*?):", subject)  #only match something between "." and ":"
-            if srvname:
-                srvname_ext = srvname.group(1)
-                
-            #Extract Event (connect/disconnect) from mail title with RegEx   
-            status = re.search(r"\((.*?)\)", subject) #only match something that is inside parentheses
-            if status:
-                status_ext=status.group(1)
-            else:
-                status_ext=""
+                #Extract Server's name from mail title with RegEx
+                srvname = re.search(r"\.(.*?):", subject)  #only match something between "." and ":"
+                if srvname:
+                    srvname_ext = srvname.group(1)
+                    
+                #Extract Event (connect/disconnect) from mail title with RegEx   
+                status = re.search(r"\((.*?)\)", subject) #only match something that is inside parentheses
+                if status:
+                    status_ext=status.group(1)
+                else:
+                    status_ext=""
+                    
+                #Form the row
+                row=[srvname_ext, status_ext, received_at]
 
-            #Form the row
-            row=[srvname_ext, status_ext, received_at]
+                #append the row to a list
+                starter_list.append(row)
 
-            #append the row to a list
-            starter_list.append(row)
-
-            #Email counter +1
-            cn+=1
+                sleep(0.01)
+                bar.next()
     else:
         print(f"Folder '{folder_name}' not found.")
         
     # Release COM objects
     del outlook
     del namespace
-    
-    print("\nTotal of "+str(cn)+ " messages.\n")
+
     sort_list(starter_list)
 
 def sort_list(input_list):
@@ -96,36 +95,41 @@ def categorize():
 
     tableOutput = PrettyTable(["No.", "Server", "Latest Status", "Date & Time"])
 
-    for i in no_tuples:
-        
-        n+=1
+    with Bar('Processing...     ', max=len(no_tuples)) as bar:
 
-        for (j ,k, l) in zip(nameslist, statlist, datelist):
-            if i==j:
-                status=k
-                event=l
+        for i in no_tuples:
+            
+            n+=1
 
-        match status:
+            for (j ,k, l) in zip(nameslist, statlist, datelist):
+                if i==j:
+                    status=k
+                    event=l
 
-            case 'connect':
-                up+=1
-                printstat='OK'
+            match status:
 
-            case 'disconnect':
-                down+=1
-                printstat='Disconnected'
+                case 'connect':
+                    up+=1
+                    printstat='OK'
 
-            case _:
-                unkn+=1
-                printstat='Unknown/Recovering'
+                case 'disconnect':
+                    down+=1
+                    printstat='Disconnected'
 
-        tableOutput.add_row([n, i, printstat, event])
+                case _:
+                    unkn+=1
+                    printstat='Unknown/Recovering'
 
+            tableOutput.add_row([n, i, printstat, event])
+            sleep(0.2)
+            bar.next()
+
+    print("\n")
     print(tableOutput)
     print('\n'+str(up)+' connected, '+str(down)+' disconnected, '+str(unkn)+' in unknown status\n')
                         
 # Call functions
-read_outlook_folder('Custom Folder')
+read_outlook_folder('PMS')
 categorize()
 
 input('\nPress Enter to close...')
