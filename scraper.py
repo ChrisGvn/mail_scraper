@@ -29,7 +29,7 @@ def read_outlook_folder(folder_name):
             for email in emails:
                 subject = email.Subject
                 received_at = email.ReceivedTime.strftime("%d-%m-%Y %H:%M:%S")
-                
+               
                 #Extract Server's name from mail title with RegEx
                 srvname = re.search(r"\.(.*?):", subject)  #only match something between "." and ":"
                 if srvname:
@@ -42,14 +42,18 @@ def read_outlook_folder(folder_name):
                 else:
                     status_ext=""
                     
+                try:   
                 #Form the row
-                row=[srvname_ext, status_ext, received_at]
+                    row=[srvname_ext, status_ext, received_at]      
 
-                #append the row to a list
-                starter_list.append(row)
+                    #append the row to a list
+                    starter_list.append(row)
 
-                sleep(0.01)
-                bar.next()
+                    sleep(0.01)
+                    bar.next()
+
+                except:
+                   print("\nInvalid E-mail format. Check PMS folder.")
     else:
         print(f"Folder '{folder_name}' not found.")
         
